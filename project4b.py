@@ -6,9 +6,10 @@ import sys
 import time
 import random
 
-temperature = 3  # T=1 is equivalent to  (k_B * T[in Kelvin])/J[in Joules]
+temperature = 1  # T=1 is equivalent to  (k_B * T[in Kelvin])/J[in Joules]
 J = 1
 spins  = np.ones(4)
+beta = 1/(temperature*J)
 
 energy = 0
 energy_sum = 0
@@ -22,11 +23,16 @@ w = {-16:math.exp(-(-16)/temperature),-8:math.exp(-(-8)/temperature), 0:math.exp
 Z = 12 + 2*math.exp(8/temperature) + 2*math.exp(-8/temperature)
 E = 2*8*J/Z * (- math.exp(8/temperature) + math.exp(-8/temperature))
 E_squared = 2*8**2*J**2/Z * (math.exp(8/temperature) + math.exp(-8/temperature))
-M = 0
+C_V = beta*(E_squared - E**2)
+M = 4*2*(math.exp(8/temperature)+2)/Z
 M_squared = 2*4**2 *(1+(math.exp(8/temperature)))/Z
-print(E)
-print(E_squared)
-print(M_squared)
+chi = beta*(M_squared - M**2)
+print('E',E)
+print('E_squared', E_squared)
+print('C_V', E_squared-E**2)
+print('M', M)
+print('M_squared', M_squared)
+print('chi', M_squared-M**2)
 T_max = 4
 energy_mean = np.zeros(T_max)
 magnetization_mean = np.zeros(T_max)
@@ -58,11 +64,11 @@ for T in temperature:
 		spin_squared_sum += sum(spins)**2
 	energy_mean[T-1] = energy_sum/MC_cycles
 	magnetization_mean[T-1] =  spin_sum/MC_cycles
-plt.plot(temperature,energy_mean)
-plt.show()
-plt.plot(temperature,magnetization_mean)
-plt.show()
-#print ( energy_sum/MC_cycles)
+#plt.plot(temperature,energy_mean)
+#plt.show()
+#plt.plot(temperature,magnetization_mean)
+#plt.show()
+	#print ( T, energy_sum/MC_cycles)
 #print ( energy_squared_sum/MC_cycles)
 #print( spin_sum/MC_cycles)
 #print( spin_squared_sum/MC_cycles)
