@@ -11,8 +11,8 @@ from project4b2 import monte_carlo # input: (spin matrix, temperature, number of
 from project4b2 import make_functions_of_T # input: (S, MC_cycles, T_max, T_step), returns: (energy_mean, magnetization_mean, C_V, chi,temperature, MC_cycles) 
 
 T_min = 2.
-T_max = 2.3
-T_step = 6
+T_max = 2.5
+T_step = 10
 temperature = np.linspace(T_min,T_max, num = T_step)
 
 MC_cycles = 10000000
@@ -34,7 +34,9 @@ plt.legend()
 plt.xlabel('temperature')
 plt.ylabel('mean energy')
 plt.title('Mean energy per particle as a function of temperature')
+
 plt.savefig('E_of_T',dpi=225)
+plt.figure()
 #plt.show()
 
 plt.plot(temperature, mean_values[0][1]/40**2, label = 'L = 40')
@@ -45,7 +47,9 @@ plt.legend()
 plt.xlabel('temperature')
 plt.ylabel('mean magnetization')
 plt.title('Mean magnetization per particle as a function of temperature')
+
 plt.savefig('M_of_T',dpi=225)
+plt.figure()
 #plt.show()
 
 plt.plot(temperature, mean_values[0][2]/40**2, label = 'L = 40')
@@ -56,7 +60,9 @@ plt.title('Heat capcity per particle as a function of temperature')
 plt.legend()
 plt.xlabel('temperature')
 plt.ylabel('C_V')
+
 plt.savefig('C_V_of_T',dpi=225)
+plt.figure()
 #plt.show()
 
 plt.plot(temperature, mean_values[0][3]/40**2, label = 'L = 40')
@@ -67,5 +73,7 @@ plt.legend()
 plt.xlabel('temperature')
 plt.ylabel('chi')
 plt.title('Susceptibility per particle as a function of temperature')
+
 plt.savefig('chi_of_T',dpi=225)
+plt.figure()
 #plt.show()
