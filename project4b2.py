@@ -9,11 +9,12 @@ import random
 J = 1
 
 def calculate_energy(S,j,k): # calculates the energy contribution of element S[jk]
-	dimension=S.shape[0]
+	dimension = S.shape[0]
 	energy = -J*(S[j,k]*S[j-1,k] + S[j,k]*S[(j+1)%dimension,k] + S[j,k]*S[j,k-1] + S[j,k]*S[j,(k+1)%dimension]) 
 	return(energy)
 
 def metropolis(S,RN,w, energy, spin):
+	dimension = S.shape[0]
 	j = random.randint(0,dimension-1)
 	k = random.randint(0,dimension-1)
 	old_energy = calculate_energy(S,j,k)
@@ -197,9 +198,9 @@ if __name__ == "__main__":
 	#plot_functions_of_T(*make_functions_of_T(S, 1000000,1, 3, 30))
 
 # To explore the excaxt expressions
-	#temperature = np.linspace(1,5, num = 40)
-	#E, C_V, M, chi = exact_expressions(temperature)
-	#plt.plot(temperature,C_V, 'g',temperature, chi, 'r')
-	#plt.show()
+	temperature = np.linspace(1,5, num = 40)
+	E, C_V, M, chi = exact_expressions(temperature)
+	plt.plot(temperature, chi, 'r')
+	plt.show()
 
 	pass
