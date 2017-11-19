@@ -13,7 +13,7 @@ def calculate_energy(S,j,k): # calculates the energy contribution of element S[j
 	energy = -J*(S[j,k]*S[j-1,k] + S[j,k]*S[(j+1)%dimension,k] + S[j,k]*S[j,k-1] + S[j,k]*S[j,(k+1)%dimension]) 
 	return(energy)
 
-def metropolis(S,RN,w, energy, spin):
+def metropolis(S,RN,w, energy, spin, acceptance):
 	dimension = S.shape[0]
 	j = random.randint(0,dimension-1)
 	k = random.randint(0,dimension-1)
@@ -29,10 +29,12 @@ def metropolis(S,RN,w, energy, spin):
 		else:
 			energy += delta_energy # accept move
 			spin += 2*S[j,k]
+			acceptance += 1
 	else :
 		energy += delta_energy # 100% acceptance when temp_energy < old_energy
 		spin += 2*S[j,k]
-	return(S, energy, spin)
+		acceptance += 1
+	return(S, energy, spin, acceptance)
 
 def monte_carlo(S,T,MC_cycles):
 	dimension = S.shape[0] 
@@ -40,6 +42,7 @@ def monte_carlo(S,T,MC_cycles):
 	spin_sum = 0
 	energy = 0
 	spin = 0 #the total spin of the system
+	acceptance = 0 # to count the number of accepted states
 	
 	energy_mean = np.zeros(MC_cycles)
 	energy_squared = np.zeros(MC_cycles)
@@ -66,7 +69,7 @@ def monte_carlo(S,T,MC_cycles):
 	for i in range(1,MC_cycles):
 		# proposes one spint to flip. Either accepts or rejects the move. Updates energy and spin of the system:
 		rn = RN[i]
-		S, energy, spin = metropolis(S ,rn ,w , energy, spin) 
+		S, energy, spin, acceptance = metropolis(S ,rn ,w , energy, spin, acceptance) 
 		
 		# adds values to the solution vectors:
 		energy_of_state[i] = energy # stores the energy of each cycle
@@ -80,7 +83,7 @@ def monte_carlo(S,T,MC_cycles):
 	for i in range(1,MC_cycles):	# calculates the mean energy squared and the mean magnetization squared
 		energy_squared[i] = energy_squared[i]/i
 		magnetization_squared[i] = magnetization_squared[i]/i
-
+	print('number of accepted configs with  T=%f' %T,acceptance)
 	return(energy_mean, energy_squared, magnetization_mean, magnetization_squared, energy_of_state)
 
 def make_functions_of_T(S, MC_cycles, T_min, T_max, T_step):
@@ -184,23 +187,23 @@ if __name__ == "__main__":
 	#S[0,0]=S[1,1] =-1
 
 # To make the plot of mean energy as a functon of MC cycles
-	#energy_mean, energy_squared, magnetization_mean, magnetization_squared, energy_of_state = monte_carlo(S,T,MC_cycles)
-	#energy_target = np.ones(MC_cycles)*(-7.98392834374676)
-	#plt.plot(energy_mean)
-	#plt.plot(energy_target)
-	#plt.xlabel('MC cycles')
-	#plt.ylabel('Mean energy')
-	#plt.title('Mean energy as a functon of MC cycles')
-	#plt.savefig('1000000MCcycles',dpi=225)
-	#plt.show()
+	energy_mean, energy_squared, magnetization_mean, magnetization_squared, energy_of_state = monte_carlo(S,T,MC_cycles)
+	energy_target = np.ones(MC_cycles)*(-7.98392834374676)
+	plt.plot(energy_mean)
+	plt.plot(energy_target)
+	plt.xlabel('MC cycles')
+	plt.ylabel('Mean energy')
+	plt.title('Mean energy as a functon of MC cycles')
+	plt.savefig('%dMCcycles'%MC_cycles,dpi=225)
+	plt.show()
 
 # To make the plots E(T), M(T), C_V(T), chi(T)
-	#plot_functions_of_T(*make_functions_of_T(S, 1000000,1, 3, 30))
+	plot_functions_of_T(*make_functions_of_T(S, 1000000,1, 3, 30))
 
 # To explore the excaxt expressions
-	temperature = np.linspace(1,5, num = 40)
-	E, C_V, M, chi = exact_expressions(temperature)
-	plt.plot(temperature, chi, 'r')
-	plt.show()
+	#temperature = np.linspace(1,5, num = 40)
+	#E, C_V, M, chi = exact_expressions(temperature)
+	#plt.plot(temperature, chi, 'r')
+	#plt.show()
 
 	pass
